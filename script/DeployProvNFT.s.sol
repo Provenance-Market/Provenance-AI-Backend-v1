@@ -42,7 +42,7 @@ contract deployProvNFT is Script {
 }
 
 // Rather deploy ProvNFT via the ProvNFTFactory
-contract deployProvNFTFactory is Script {
+contract DeployProvNFTFactory is Script {
     function run() external returns (ProvNFTFactory) {
         vm.startBroadcast();
         ProvNFTFactory provNFTFactory = new ProvNFTFactory();
