@@ -99,4 +99,66 @@ contract BasicNftFactoryTest is Test {
             h_expectedName == h_actualName && h_expectedSymbol == h_actualSymbol
         );
     }
+
+    function testMintFeeIsCorrect() public {
+        provNFTFactory.createBasicNft(
+            name,
+            symbol,
+            payees,
+            splitSharesEvenly(),
+            mintFee
+        );
+
+        ProvNFT[] memory deployedContracts = provNFTFactory
+            .getDeployedContracts();
+
+        // Get first deployed contract
+        ProvNFT provNFT = deployedContracts[0];
+
+        uint256 actualMintFee = provNFT.mintPrice();
+
+        assert(mintFee == actualMintFee);
+    }
+
+    function testPayeesAreCorrect() public {
+        provNFTFactory.createBasicNft(
+            name,
+            symbol,
+            payees,
+            splitSharesEvenly(),
+            mintFee
+        );
+
+        ProvNFT[] memory deployedContracts = provNFTFactory
+            .getDeployedContracts();
+
+        // Get first deployed contract
+        ProvNFT provNFT = deployedContracts[0];
+
+        for (uint i = 0; i < payees.length; i++) {
+            assert(payees[i] == provNFT.owners(i));
+        }
+    }
+
+    // function testSplitSharesEvenly() public {
+    //     provNFTFactory.createBasicNft(
+    //         name,
+    //         symbol,
+    //         payees,
+    //         splitSharesEvenly(),
+    //         mintFee
+    //     );
+
+    //     ProvNFT[] memory deployedContracts = provNFTFactory
+    //         .getDeployedContracts();
+
+    //     // Get first deployed contract
+    //     ProvNFT provNFT = deployedContracts[0];
+
+    //     uint256[] memory sharesArray = provNFT.splitSharesEvenly();
+
+    //     for (uint i = 0; i < sharesArray.length; i++) {
+    //         assert(sharesArray[i] == 1);
+    //     }
+    // }
 }
