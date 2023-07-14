@@ -1,5 +1,21 @@
-1. Run ```make install```
+1. Configure keys in your `.env`
 
-2. To deploy single NFT ```make DeployProvNFTFactory ARGS="--network sepolia"```
+```.env
+SEPOLIA_RPC_URL="RPC URL"
+PRIVATE_KEY="sepolia testnet api key"
+ETHERSCAN_API_KEY="etherscane api key to verify contracts"
+```
 
-2. To deploy Factory ```make DeployProvNFTFactory ARGS="--network sepolia"```
+2. Run `make install` to install packages
+
+3. Run `make DeployProvNFTFactory ARGS="--network sepolia"` to deploy Factory to sepolia
+
+4. Run `forge test` to run all tests
+* Or run `forge test --mt <TEST NAME>` to run a specific test
+    * e.g., `forge test --mt testNameAndSymbolIsCorrect`
+
+
+* `/src` - Contracts 
+* `/script` - Deploy Scripts 
+* `/test` - Tests
+* `Makefile` - commands
