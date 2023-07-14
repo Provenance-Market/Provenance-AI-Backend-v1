@@ -59,38 +59,44 @@ contract BasicNftFactoryTest is Test {
         assert(deployedContracts.length == 1);
     }
 
-    // function testNameAndSymbolIsCorrect() public {
-    //     // String comparison in Solidity is tricky. We can't just compare
-    //     string memory expectedName = "TestNft";
-    //     string memory expectedSymbol = "TEST";
+    function testNameAndSymbolIsCorrect() public {
+        // String comparison in Solidity is tricky. We can't just compare
+        string memory expectedName = "TestNft";
+        string memory expectedSymbol = "TEST";
 
-    //     basicNftFactory.createBasicNft(expectedName, expectedSymbol);
+        provNFTFactory.createBasicNft(
+            expectedName,
+            expectedSymbol,
+            payees,
+            splitSharesEvenly(),
+            mintFee
+        );
 
-    //     BasicNft[] memory deployedContracts = basicNftFactory
-    //         .getDeployedContracts();
+        ProvNFT[] memory deployedContracts = provNFTFactory
+            .getDeployedContracts();
 
-    //     // Get first deployed contract
-    //     BasicNft basicNft = deployedContracts[0];
+        // Get first deployed contract
+        ProvNFT provNFT = deployedContracts[0];
 
-    //     string memory actualName = basicNft.name();
-    //     string memory actualSymbol = basicNft.symbol();
+        string memory actualName = provNFT.name();
+        string memory actualSymbol = provNFT.symbol();
 
-    //     bytes32 h_expectedName;
-    //     bytes32 h_actualName;
-    //     (h_expectedName, h_actualName) = convertToHash(
-    //         expectedName,
-    //         actualName
-    //     );
+        bytes32 h_expectedName;
+        bytes32 h_actualName;
+        (h_expectedName, h_actualName) = convertToHash(
+            expectedName,
+            actualName
+        );
 
-    //     bytes32 h_expectedSymbol;
-    //     bytes32 h_actualSymbol;
-    //     (h_expectedSymbol, h_actualSymbol) = convertToHash(
-    //         expectedSymbol,
-    //         actualSymbol
-    //     );
+        bytes32 h_expectedSymbol;
+        bytes32 h_actualSymbol;
+        (h_expectedSymbol, h_actualSymbol) = convertToHash(
+            expectedSymbol,
+            actualSymbol
+        );
 
-    //     assert(
-    //         h_expectedName == h_actualName && h_expectedSymbol == h_actualSymbol
-    //     );
-    // }
+        assert(
+            h_expectedName == h_actualName && h_expectedSymbol == h_actualSymbol
+        );
+    }
 }
