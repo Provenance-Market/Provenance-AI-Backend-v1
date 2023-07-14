@@ -140,25 +140,25 @@ contract BasicNftFactoryTest is Test {
         }
     }
 
-    // function testSplitSharesEvenly() public {
-    //     provNFTFactory.createBasicNft(
-    //         name,
-    //         symbol,
-    //         payees,
-    //         splitSharesEvenly(),
-    //         mintFee
-    //     );
+    function testSplitSharesEvenly() public {
+        uint256[] memory sharesArray = splitSharesEvenly();
 
-    //     ProvNFT[] memory deployedContracts = provNFTFactory
-    //         .getDeployedContracts();
+        provNFTFactory.createBasicNft(
+            name,
+            symbol,
+            payees,
+            sharesArray,
+            mintFee
+        );
 
-    //     // Get first deployed contract
-    //     ProvNFT provNFT = deployedContracts[0];
+        ProvNFT[] memory deployedContracts = provNFTFactory
+            .getDeployedContracts();
 
-    //     uint256[] memory sharesArray = provNFT.splitSharesEvenly();
+        // Get first deployed contract
+        ProvNFT provNFT = deployedContracts[0];
 
-    //     for (uint i = 0; i < sharesArray.length; i++) {
-    //         assert(sharesArray[i] == 1);
-    //     }
-    // }
+        for (uint i = 0; i < payees.length; i++) {
+            assert(provNFT.shares(payees[i]) == sharesArray[i]);
+        }
+    }
 }
