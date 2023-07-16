@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import {Test} from "forge-std/Test.sol";
+import {Test, console} from "forge-std/Test.sol";
 import {ProvNFTFactory, ProvNFT} from "../src/ProvNFTFactory.sol";
 import {DeployProvNFTFactory} from "../script/deployProvNFT.s.sol";
 
@@ -194,6 +194,12 @@ contract BasicNftFactoryTest is Test {
         uint256[] memory initialBalances = new uint256[](payees.length);
         for (uint i = 0; i < payees.length; i++) {
             initialBalances[i] = payees[i].balance;
+            console.log(
+                "Initial -- payees: ",
+                payees[i],
+                "balance",
+                initialBalances[i]
+            );
         }
 
         // Release the funds
@@ -204,6 +210,12 @@ contract BasicNftFactoryTest is Test {
         // Check if funds were released equally among payees
         uint256 share = SEND_VALUE / payees.length;
         for (uint i = 0; i < payees.length; i++) {
+            console.log(
+                "Final -- payees: ",
+                payees[i],
+                "balance",
+                payees[i].balance
+            );
             assertEq(payees[i].balance, initialBalances[i] + share);
         }
     }
