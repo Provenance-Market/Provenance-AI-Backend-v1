@@ -214,9 +214,46 @@ contract BasicNftFactoryTest is Test {
                 "Final -- payees: ",
                 payees[i],
                 "balance",
-                payees[i].balance
+                payees[i].balance + share
             );
             assertEq(payees[i].balance, initialBalances[i] + share);
+        }
+    }
+
+    function testReleaseFundsRevertsForNonPayees() public {
+        // Set up prank and deal some Ether to USER
+        hoax(USER, STARTING_USER_BALANCE);
+
+        // Create a BasicNFT
+        provNFTFactory.createBasicNft(
+            name,
+            symbol,
+            payees,
+            splitSharesEvenly(),
+            mintFee
+        );
+
+        ProvNFT[] memory deployedContracts = provNFTFactory
+            .getDeployedContracts();
+
+        // Get first deployed contract
+        ProvNFT provNFT = deployedContracts[0];
+
+        // Fund the contract
+        vm.prank(USER);
+        address(provNFT).call{value: SEND_VALUE}("");
+
+        // Array of non-payee addresses
+        address[3] memory nonPayees = [
+            address(2), // Any address that is not a payee
+            address(3),
+            address(4)
+        ];
+
+        // Attempt to release the funds for non-payees and expect reverts
+        for (uint i = 0; i < nonPayees.length; i++) {
+            vm.expectRevert();
+            provNFT.release(payable(nonPayees[i]));
         }
     }
 }
