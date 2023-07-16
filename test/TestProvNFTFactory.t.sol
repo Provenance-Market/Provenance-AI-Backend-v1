@@ -18,6 +18,11 @@ contract BasicNftFactoryTest is Test {
         0xE33cb5b4B828C775122FB90F7Dcc7c750b4aee3f
     ];
 
+    address public constant USER = address(1);
+    uint256 public constant SEND_VALUE = 0.1 ether;
+    uint256 public constant STARTING_USER_BALANCE = 10 ether;
+    uint256 public constant GAS_PRICE = 1;
+
     // Util function to calculate shares array
     function splitSharesEvenly() public view returns (uint[] memory) {
         uint[] memory sharesArray = new uint[](payees.length);
@@ -159,6 +164,47 @@ contract BasicNftFactoryTest is Test {
 
         for (uint i = 0; i < payees.length; i++) {
             assert(provNFT.shares(payees[i]) == sharesArray[i]);
+        }
+    }
+
+    function testReleaseFundsEvenly() public {
+        // Set up prank and deal some Ether to USER
+        hoax(USER, STARTING_USER_BALANCE);
+
+        // Create a BasicNFT
+        provNFTFactory.createBasicNft(
+            name,
+            symbol,
+            payees,
+            splitSharesEvenly(),
+            mintFee
+        );
+
+        ProvNFT[] memory deployedContracts = provNFTFactory
+            .getDeployedContracts();
+
+        // Get first deployed contract
+        ProvNFT provNFT = deployedContracts[0];
+
+        // Fund the contract
+        vm.prank(USER);
+        address(provNFT).call{value: SEND_VALUE}("");
+
+        // Record initial balances of all payees
+        uint256[] memory initialBalances = new uint256[](payees.length);
+        for (uint i = 0; i < payees.length; i++) {
+            initialBalances[i] = payees[i].balance;
+        }
+
+        // Release the funds
+        for (uint i = 0; i < payees.length; i++) {
+            provNFT.release(payable(payees[i]));
+        }
+
+        // Check if funds were released equally among payees
+        uint256 share = SEND_VALUE / payees.length;
+        for (uint i = 0; i < payees.length; i++) {
+            assertEq(payees[i].balance, initialBalances[i] + share);
         }
     }
 }
