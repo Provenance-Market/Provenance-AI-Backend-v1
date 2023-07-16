@@ -13,6 +13,8 @@ ETHERSCAN_API_KEY="etherscane api key to verify contracts"
 4. Run `forge test` to run all tests
 * Or run `forge test --mt <TEST NAME>` to run a specific test
     * e.g., `forge test --mt testNameAndSymbolIsCorrect`
+* Add the `-vv` flag to see the console.log statements in the test
+    * `forge test --mt testReleaseFundsEvenly -vv`
 
 
 * `/src` - Contracts 
