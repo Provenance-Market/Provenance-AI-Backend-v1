@@ -22,6 +22,8 @@ contract BasicNftFactoryTest is Test {
     uint256 public constant SEND_VALUE = 0.1 ether;
     uint256 public constant STARTING_USER_BALANCE = 10 ether;
     uint256 public constant GAS_PRICE = 1;
+    string public constant USER_URI =
+        "ipfs://bafybeig37ioir76s7mg5oobetncojcm3c3hxasyd4rvid4jqhy4gkaheg4/?filename=0-PUG.json";
 
     // Util function to calculate shares array
     function splitSharesEvenly() public view returns (uint[] memory) {
@@ -256,4 +258,34 @@ contract BasicNftFactoryTest is Test {
             provNFT.release(payable(nonPayees[i]));
         }
     }
+
+    function testCanMintAndHaveBalance() public {
+        hoax(USER, STARTING_USER_BALANCE);
+
+        provNFTFactory.createBasicNft(
+            name,
+            symbol,
+            payees,
+            splitSharesEvenly(),
+            mintFee
+        );
+
+        ProvNFT[] memory deployedContracts = provNFTFactory
+            .getDeployedContracts();
+
+        // Get first deployed contract
+        ProvNFT provNFT = deployedContracts[0];
+
+        bytes32 h_expectedURI;
+        bytes32 h_actualURI;
+
+        vm.prank(USER);
+        provNFT.mint{value: SEND_VALUE}(USER_URI);
+        assertEq(provNFT.balanceOf(USER, provNFT.getTotalSupply()), 1);
+
+        (h_expectedURI, h_actualURI) = convertToHash(USER_URI, provNFT.uri(0));
+
+        assert(h_expectedURI == h_actualURI);
+    }
+    // Test revert for minting when not enough Ether is sent
 }
