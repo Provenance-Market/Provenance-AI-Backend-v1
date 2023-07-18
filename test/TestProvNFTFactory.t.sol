@@ -253,6 +253,7 @@ contract BasicNftFactoryTest is Test {
         ];
 
         // Attempt to release the funds for non-payees and expect reverts
+        // Optimize gas
         for (uint i = 0; i < nonPayees.length; i++) {
             vm.expectRevert();
             provNFT.release(payable(nonPayees[i]));
