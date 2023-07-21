@@ -18,10 +18,10 @@ contract ProvNFT is
     Counters.Counter private _tokenIds;
 
     uint8 constant SUPPLY_PER_ID = 1;
-    string public name;
-    string public symbol;
-    uint256 public mintPrice;
-    address[] public owners;
+    string public s_name;
+    string public s_symbol;
+    uint256 public s_mintPrice;
+    address[] public s_owners;
 
     event NFTMinted(
         address indexed owner,
@@ -38,17 +38,17 @@ contract ProvNFT is
         uint256[] memory _shares,
         uint256 _mintFee
     ) ERC1155("") PaymentSplitter(_payees, _shares) {
-        name = _name;
-        symbol = _symbol;
-        owners = _payees;
-        mintPrice = _mintFee;
+        s_name = _name;
+        s_symbol = _symbol;
+        s_owners = _payees;
+        s_mintPrice = _mintFee;
     }
 
     modifier onlyOwners() {
         bool isOwner = false;
-        uint256 numOwners = owners.length;
+        uint256 numOwners = s_owners.length;
         for (uint256 addy = 0; addy < numOwners; addy++) {
-            if (msg.sender == owners[addy]) {
+            if (msg.sender == s_owners[addy]) {
                 isOwner = true;
                 break;
             }
@@ -58,7 +58,7 @@ contract ProvNFT is
     }
 
     function mint(string memory metadataURI) public payable returns (uint256) {
-        require(msg.value >= mintPrice, "Invalid ether amount for minting");
+        require(msg.value >= s_mintPrice, "Invalid ether amount for minting");
 
         uint256 newItemId = _tokenIds.current();
         _mint(msg.sender, newItemId, SUPPLY_PER_ID, "");
@@ -87,7 +87,7 @@ contract ProvNFT is
             "metadataURIs array length does not match the NFT mint amount"
         );
         require(
-            msg.value >= mintPrice * mintAmount,
+            msg.value >= s_mintPrice * mintAmount,
             "Invalid ether amount for minting"
         );
 
@@ -120,7 +120,7 @@ contract ProvNFT is
     // Only Owners functions
 
     function setMintFee(uint256 _newMintFee) public onlyOwners {
-        mintPrice = _newMintFee;
+        s_mintPrice = _newMintFee;
     }
 
     function pause() public onlyOwners {
