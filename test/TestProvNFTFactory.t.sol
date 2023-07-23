@@ -85,8 +85,8 @@ contract BasicNftFactoryTest is Test {
         // Get first deployed contract
         ProvNFT provNFT = deployedContracts[0];
 
-        string memory actualName = provNFT.name();
-        string memory actualSymbol = provNFT.symbol();
+        string memory actualName = provNFT.getName();
+        string memory actualSymbol = provNFT.getSymbol();
 
         bytes32 h_expectedName;
         bytes32 h_actualName;
@@ -122,7 +122,7 @@ contract BasicNftFactoryTest is Test {
         // Get first deployed contract
         ProvNFT provNFT = deployedContracts[0];
 
-        uint256 actualMintFee = provNFT.mintPrice();
+        uint256 actualMintFee = provNFT.getMintPrice();
 
         assert(mintFee == actualMintFee);
     }
@@ -142,8 +142,10 @@ contract BasicNftFactoryTest is Test {
         // Get first deployed contract
         ProvNFT provNFT = deployedContracts[0];
 
+        address[] memory owners = provNFT.getOwners();
+
         for (uint i = 0; i < payees.length; i++) {
-            assert(payees[i] == provNFT.owners(i));
+            assert(payees[i] == owners[i]);
         }
     }
 

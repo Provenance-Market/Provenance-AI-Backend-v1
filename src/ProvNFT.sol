@@ -18,10 +18,10 @@ contract ProvNFT is
     Counters.Counter private _tokenIds;
 
     uint8 constant SUPPLY_PER_ID = 1;
-    string public s_name;
-    string public s_symbol;
-    uint256 public s_mintPrice;
-    address[] public s_owners;
+    string private s_name;
+    string private s_symbol;
+    uint256 private s_mintPrice;
+    address[] private s_owners;
 
     event NFTMinted(
         address indexed owner,
@@ -154,5 +154,22 @@ contract ProvNFT is
         returns (string memory)
     {
         return super.uri(tokenId);
+    }
+
+    // Getter functions for private variables
+    function getName() public view returns (string memory) {
+        return s_name;
+    }
+
+    function getSymbol() public view returns (string memory) {
+        return s_symbol;
+    }
+
+    function getMintPrice() public view returns (uint256) {
+        return s_mintPrice;
+    }
+
+    function getOwners() public view returns (address[] memory) {
+        return s_owners;
     }
 }
