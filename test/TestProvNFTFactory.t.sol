@@ -284,6 +284,12 @@ contract BasicNftFactoryTest is Test {
 
         vm.prank(USER);
         provNFT.mint{value: SEND_VALUE}(USER_URI);
+
+        console.log(
+            "USER Balance: ",
+            provNFT.balanceOf(USER, provNFT.getTotalSupply())
+        );
+
         assertEq(provNFT.balanceOf(USER, provNFT.getTotalSupply()), 1);
 
         (h_expectedURI, h_actualURI) = convertToHash(USER_URI, provNFT.uri(0));
