@@ -23,6 +23,9 @@ contract ProvNFT is
     uint256 private s_mintPrice;
     address[] private s_owners;
 
+    // Mapping from owner to list of owned token IDs
+    mapping(address => uint256[]) private _ownedTokens;
+
     event NFTMinted(
         address indexed owner,
         uint256 indexed tokenId,
@@ -64,6 +67,8 @@ contract ProvNFT is
         _mint(msg.sender, newItemId, SUPPLY_PER_ID, "");
         _setURI(newItemId, metadataURI);
         _tokenIds.increment();
+
+        _addTokenToOwner(msg.sender, newItemId);
 
         emit NFTMinted(msg.sender, newItemId, msg.value);
 
@@ -154,6 +159,32 @@ contract ProvNFT is
         returns (string memory)
     {
         return super.uri(tokenId);
+    }
+
+    // Helper functions
+    // Add token to owner
+    function _addTokenToOwner(address to, uint256 tokenId) private {
+        _ownedTokens[to].push(tokenId);
+    }
+
+    // Get list of token IDs owned by a given address
+    function tokensOfOwner(
+        address owner
+    ) public view returns (uint256[] memory) {
+        return _ownedTokens[owner];
+    }
+
+    function tokenURIsOfOwner(
+        address owner
+    ) public view returns (string[] memory) {
+        uint256[] memory tokenIds = tokensOfOwner(owner);
+        string[] memory tokenURIs = new string[](tokenIds.length);
+
+        for (uint i = 0; i < tokenIds.length; i++) {
+            tokenURIs[i] = uri(tokenIds[i]);
+        }
+
+        return tokenURIs;
     }
 
     // Getter functions for private variables
