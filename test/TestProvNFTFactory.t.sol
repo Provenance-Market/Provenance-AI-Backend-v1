@@ -6,6 +6,7 @@ import {ProvNFTFactory, ProvNFT} from "../src/ProvNFTFactory.sol";
 import {DeployProvNFTFactory} from "../script/deployProvNFT.s.sol";
 
 contract BasicNftFactoryTest is Test {
+    ProvNFT provNFT_mod;
     DeployProvNFTFactory public deployProvNFTFactory;
     ProvNFTFactory public provNFTFactory;
 
@@ -82,7 +83,6 @@ contract BasicNftFactoryTest is Test {
         ProvNFT[] memory deployedContracts = provNFTFactory
             .getDeployedContracts();
 
-        // Get first deployed contract
         ProvNFT provNFT = deployedContracts[0];
 
         string memory actualName = provNFT.getName();
@@ -107,7 +107,8 @@ contract BasicNftFactoryTest is Test {
         );
     }
 
-    function testMintFeeIsCorrect() public {
+    // Modifiers
+    modifier deployed() {
         provNFTFactory.createBasicNft(
             name,
             symbol,
@@ -120,54 +121,28 @@ contract BasicNftFactoryTest is Test {
             .getDeployedContracts();
 
         // Get first deployed contract
-        ProvNFT provNFT = deployedContracts[0];
+        provNFT_mod = deployedContracts[0];
+        _;
+    }
 
-        uint256 actualMintFee = provNFT.getMintPrice();
-
+    function testMintFeeIsCorrect() public deployed {
+        uint256 actualMintFee = provNFT_mod.getMintPrice();
         assert(mintFee == actualMintFee);
     }
 
-    function testPayeesAreCorrect() public {
-        provNFTFactory.createBasicNft(
-            name,
-            symbol,
-            payees,
-            splitSharesEvenly(),
-            mintFee
-        );
-
-        ProvNFT[] memory deployedContracts = provNFTFactory
-            .getDeployedContracts();
-
-        // Get first deployed contract
-        ProvNFT provNFT = deployedContracts[0];
-
-        address[] memory owners = provNFT.getOwners();
+    function testPayeesAreCorrect() public deployed {
+        address[] memory owners = provNFT_mod.getOwners();
 
         for (uint i = 0; i < payees.length; i++) {
+            console.log("payees[i]: ", payees[i], "owners[i]: ", owners[i]);
             assert(payees[i] == owners[i]);
         }
     }
 
-    function testSplitSharesEvenly() public {
+    function testSplitSharesEvenly() public deployed {
         uint256[] memory sharesArray = splitSharesEvenly();
-
-        provNFTFactory.createBasicNft(
-            name,
-            symbol,
-            payees,
-            sharesArray,
-            mintFee
-        );
-
-        ProvNFT[] memory deployedContracts = provNFTFactory
-            .getDeployedContracts();
-
-        // Get first deployed contract
-        ProvNFT provNFT = deployedContracts[0];
-
         for (uint i = 0; i < payees.length; i++) {
-            assert(provNFT.shares(payees[i]) == sharesArray[i]);
+            assert(provNFT_mod.shares(payees[i]) == sharesArray[i]);
         }
     }
 
@@ -299,5 +274,4 @@ contract BasicNftFactoryTest is Test {
 
         assert(h_expectedURI == h_actualURI);
     }
-    // Test revert for minting when not enough Ether is sent
 }
