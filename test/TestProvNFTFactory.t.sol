@@ -192,7 +192,8 @@ contract BasicNftFactoryTest is Test {
 
         // Fund the contract
         vm.prank(USER);
-        address(provNFT).call{value: SEND_VALUE}("");
+        (bool success, ) = address(provNFT).call{value: SEND_VALUE}("");
+        assertEq(success, true);
 
         // Record initial balances of all payees
         uint256[] memory initialBalances = new uint256[](payees.length);
@@ -245,7 +246,8 @@ contract BasicNftFactoryTest is Test {
 
         // Fund the contract
         vm.prank(USER);
-        address(provNFT).call{value: SEND_VALUE}("");
+        (bool success, ) = address(provNFT).call{value: SEND_VALUE}("");
+        assertEq(success, true);
 
         // Array of non-payee addresses
         address[3] memory nonPayees = [
@@ -285,12 +287,13 @@ contract BasicNftFactoryTest is Test {
         vm.prank(USER);
         provNFT.mint{value: SEND_VALUE}(USER_URI);
 
+        console.log("getTotalSupply(): ", provNFT.getTotalSupply());
         console.log(
-            "USER Balance: ",
-            provNFT.balanceOf(USER, provNFT.getTotalSupply())
+            "balanceOf(): ",
+            provNFT.balanceOf(USER, (provNFT.getTotalSupply() - 1))
         );
 
-        assertEq(provNFT.balanceOf(USER, provNFT.getTotalSupply()), 1);
+        assertEq(provNFT.balanceOf(USER, (provNFT.getTotalSupply() - 1)), 1);
 
         (h_expectedURI, h_actualURI) = convertToHash(USER_URI, provNFT.uri(0));
 
