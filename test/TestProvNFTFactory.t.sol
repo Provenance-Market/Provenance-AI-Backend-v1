@@ -239,38 +239,31 @@ contract BasicNftFactoryTest is Test {
         }
     }
 
-    function testCanMintAndHaveBalance() public {
+    function testCanMintAndHaveBalance() public deployed {
         hoax(USER, STARTING_USER_BALANCE);
-
-        provNFTFactory.createBasicNft(
-            name,
-            symbol,
-            payees,
-            splitSharesEvenly(),
-            mintFee
-        );
-
-        ProvNFT[] memory deployedContracts = provNFTFactory
-            .getDeployedContracts();
-
-        // Get first deployed contract
-        ProvNFT provNFT = deployedContracts[0];
 
         bytes32 h_expectedURI;
         bytes32 h_actualURI;
 
-        vm.prank(USER);
-        provNFT.mint{value: SEND_VALUE}(USER_URI);
+        // [FAIL. Reason: You cannot overwrite `prank` until it is applied at least once]
+        // vm.prank(USER);
+        provNFT_mod.mint{value: SEND_VALUE}(USER_URI);
 
-        console.log("getTotalSupply(): ", provNFT.getTotalSupply());
+        console.log("getTotalSupply(): ", provNFT_mod.getTotalSupply());
         console.log(
             "balanceOf(): ",
-            provNFT.balanceOf(USER, (provNFT.getTotalSupply() - 1))
+            provNFT_mod.balanceOf(USER, (provNFT_mod.getTotalSupply() - 1))
         );
 
-        assertEq(provNFT.balanceOf(USER, (provNFT.getTotalSupply() - 1)), 1);
+        assertEq(
+            provNFT_mod.balanceOf(USER, (provNFT_mod.getTotalSupply() - 1)),
+            1
+        );
 
-        (h_expectedURI, h_actualURI) = convertToHash(USER_URI, provNFT.uri(0));
+        (h_expectedURI, h_actualURI) = convertToHash(
+            USER_URI,
+            provNFT_mod.uri(0)
+        );
 
         assert(h_expectedURI == h_actualURI);
     }
