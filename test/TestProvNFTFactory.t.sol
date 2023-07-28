@@ -267,4 +267,19 @@ contract BasicNftFactoryTest is Test {
 
         assert(h_expectedURI == h_actualURI);
     }
+
+    function testSetMintFeeRevertsForNonOwners() public deployed {
+        hoax(USER, STARTING_USER_BALANCE);
+
+        // The new mint fee that we will try to set
+        uint256 newMintFee = 2000000000000000;
+
+        // Prank the EVM to make the call from the USER address
+        // vm.prank(USER);
+
+        // Attempt to set the mint fee and expect it to revert
+        // with the ProvNFT__OnlyOwner error message
+        vm.expectRevert(); //"ProvNFT__OnlyOwner()"
+        provNFT_mod.setMintFee(newMintFee);
+    }
 }
