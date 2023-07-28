@@ -14,6 +14,9 @@ contract ProvNFT is
     Pausable,
     PaymentSplitter
 {
+    // Custom Errors
+    error ProvNFT__OnlyOwner();
+
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
@@ -56,7 +59,10 @@ contract ProvNFT is
                 break;
             }
         }
-        require(isOwner, "Caller has to be an owner");
+        // require(isOwner, "Caller has to be an owner");
+        if (!isOwner) {
+            revert ProvNFT__OnlyOwner();
+        }
         _;
     }
 
