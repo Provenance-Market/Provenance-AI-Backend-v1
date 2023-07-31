@@ -16,6 +16,8 @@ contract ProvNFT is
 {
     // Custom Errors
     error ProvNFT__OnlyOwner();
+    error ProvNFT__NotEnoughFundsMinting(); //Invalid ether amount for minting
+    error ProvNFT__NotEnoughFundsImgGen(); //Invalid ether amount for Image Generation
 
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
@@ -26,7 +28,7 @@ contract ProvNFT is
     uint256 private s_mintPrice;
     address[] private s_owners;
 
-    // Mapping from owner to list of owned token IDs
+    // Mapping from owner to list of owned token IDs trest
     mapping(address => uint256[]) private _ownedTokens;
 
     event NFTMinted(
@@ -67,7 +69,10 @@ contract ProvNFT is
     }
 
     function mint(string memory metadataURI) public payable returns (uint256) {
-        require(msg.value >= s_mintPrice, "Invalid ether amount for minting");
+        // require(msg.value >= s_mintPrice, "Invalid ether amount for minting");
+        if (msg.value >= s_mintPrice) {
+            revert ProvNFT__NotEnoughFunds()
+        }
 
         uint256 newItemId = _tokenIds.current();
         _mint(msg.sender, newItemId, SUPPLY_PER_ID, "");
