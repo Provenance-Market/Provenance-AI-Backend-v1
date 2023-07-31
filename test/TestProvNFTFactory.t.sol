@@ -282,4 +282,19 @@ contract BasicNftFactoryTest is Test {
         vm.expectRevert(); //"ProvNFT__OnlyOwner()"
         provNFT_mod.setMintFee(newMintFee);
     }
+
+    function testDeployNftFromFactoryRevertsOnInvalidInput() public {
+        string memory emptyName = "";
+        string memory emptySymbol = "";
+
+        // Expect revert
+        vm.expectRevert();
+        provNFTFactory.createBasicNft(
+            emptyName,
+            emptySymbol,
+            payees,
+            splitSharesEvenly(),
+            mintFee
+        );
+    }
 }
