@@ -70,8 +70,8 @@ contract ProvNFT is
 
     function mint(string memory metadataURI) public payable returns (uint256) {
         // require(msg.value >= s_mintPrice, "Invalid ether amount for minting");
-        if (msg.value >= s_mintPrice) {
-            revert ProvNFT__NotEnoughFunds()
+        if (msg.value <= s_mintPrice) {
+            revert ProvNFT__NotEnoughFundsMinting();
         }
 
         uint256 newItemId = _tokenIds.current();
