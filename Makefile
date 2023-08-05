@@ -23,8 +23,13 @@ ifeq ($(findstring --network sepolia,$(ARGS)),--network sepolia)
 	NETWORK_ARGS := --rpc-url $(SEPOLIA_RPC_URL) --private-key $(PRIVATE_KEY) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
 endif
 
+# Add this conditional for GOERLI
+ifeq ($(findstring --network goerli,$(ARGS)),--network goerli)
+	NETWORK_ARGS := --rpc-url $(GOERLI_RPC_URL) --private-key $(PRIVATE_KEY) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
+endif
+
 DeployProvNFTFactory:
-	@forge script script/DeployProvNFT.s.sol:deployProvNFTFactory $(NETWORK_ARGS)
+	@forge script script/DeployProvNFT.s.sol:DeployProvNFTFactory $(NETWORK_ARGS)
 
 DeployProvNFT:
 	@forge script script/DeployProvNFT.s.sol:deployProvNFT $(NETWORK_ARGS)
