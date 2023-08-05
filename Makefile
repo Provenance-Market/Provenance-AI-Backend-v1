@@ -33,3 +33,6 @@ DeployProvNFTFactory:
 
 DeployProvNFT:
 	@forge script script/DeployProvNFT.s.sol:deployProvNFT $(NETWORK_ARGS)
+
+mintProvNFT:
+	@forge script script/Interactions.s.sol:DeployFactoryAndMintNft $(NETWORK_ARGS)
