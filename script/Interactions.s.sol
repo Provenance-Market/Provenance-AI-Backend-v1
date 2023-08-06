@@ -5,26 +5,13 @@ import {Script, console} from "forge-std/Script.sol";
 import {DevOpsTools} from "foundry-devops/src/DevOpsTools.sol";
 import {ProvNFTFactory} from "../src/ProvNFTFactory.sol";
 import {ProvNFT} from "../src/ProvNFT.sol";
+import {HelperConfig} from "./HelperConfig.s.sol";
 
 contract DeployFactoryAndMintNft is Script {
-    string public constant EXAMPLE_URI =
-        "ipfs://bafybeig37ioir76s7mg5oobetncojcm3c3hxasyd4rvid4jqhy4gkaheg4/?filename=0-PUG.json";
-
-    address[] public payees = [
-        0x7bE0e2BA81E9805F834Ee5661693241b3DC3034E,
-        0x111882696d2eCD112FB55C6829C1dad04d44397b,
-        0xE33cb5b4B828C775122FB90F7Dcc7c750b4aee3f
-    ];
-
-    uint256 public mintFee = 100000000000000; // 0.0001 ether
-
-    function splitSharesEvenly() public view returns (uint[] memory) {
-        uint[] memory sharesArray = new uint[](payees.length);
-        for (uint i = 0; i < payees.length; i++) {
-            sharesArray[i] = 1;
-        }
-        return sharesArray;
-    }
+    HelperConfig helperConfig = new HelperConfig();
+    address[] public payees = helperConfig.getAllPayees();
+    string public EXAMPLE_URI = helperConfig.EXAMPLE_URI();
+    uint256 public mintFee = helperConfig.mintFee();
 
     function run() external {
         address mostRecentlyDeployedBasicNft = DevOpsTools
@@ -38,7 +25,7 @@ contract DeployFactoryAndMintNft is Script {
             "TEST OPENSEA",
             "TOS",
             payees,
-            splitSharesEvenly(),
+            helperConfig.splitSharesEvenly(),
             mintFee
         );
         //Need to index out latest deployment, not first
