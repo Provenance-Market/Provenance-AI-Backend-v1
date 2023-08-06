@@ -4,8 +4,10 @@ pragma solidity 0.8.19;
 import {Test, console} from "forge-std/Test.sol";
 import {ProvNFTFactory, ProvNFT} from "../src/ProvNFTFactory.sol";
 import {DeployProvNFTFactory} from "../script/deployProvNFT.s.sol";
+import {HelperConfig} from "../script/HelperConfig.s.sol";
 
 contract BasicNftFactoryTest is Test {
+    HelperConfig helperConfig = new HelperConfig();
     ProvNFT provNFT_mod;
     DeployProvNFTFactory public deployProvNFTFactory;
     ProvNFTFactory public provNFTFactory;
@@ -13,12 +15,7 @@ contract BasicNftFactoryTest is Test {
     string public name = "ProvNFT";
     string public symbol = "PROV";
     uint256 public mintFee = 1000000000000000;
-    address[] public payees = [
-        0x7bE0e2BA81E9805F834Ee5661693241b3DC3034E,
-        0x111882696d2eCD112FB55C6829C1dad04d44397b,
-        0xE33cb5b4B828C775122FB90F7Dcc7c750b4aee3f
-    ];
-
+    address[] public payees = helperConfig.getAllPayees();
     address public constant USER = address(1);
     uint256 public constant SEND_VALUE = 0.1 ether;
     uint256 public constant STARTING_USER_BALANCE = 10 ether;
